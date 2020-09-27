@@ -9,11 +9,11 @@ require 'mechanize'
 class GameManager
     def initialize(*args)
         @agent = Mechanize.new
-        @page = @agent.get("https://www.igdb.com/games/#{(args[0])}")
+        @page = @agent.get("https://www.igdb.com/games/" + args[0])
     end
 
     def getPublisher
-        return @page.at("span[itemprop=\"publisher\"]").text        
+        return @page.at("span[itemprop=\"publisher\"]").text
     end
     
     def getReleaseDate

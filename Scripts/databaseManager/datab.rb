@@ -23,4 +23,12 @@ class DbManager
         end
         return false
     end
+
+    def updateGame(name, platform, developer, gameModes, genre, publisher, releaseDate)
+        @client.query("UPDATE games SET release_date = STR_TO_DATE(\'#{releaseDate}\', \'%M %e, %Y\'),
+            publisher = \'#{publisher}\',
+            developer = \'#{developer}\'
+            WHERE \`name\` = \'#{name}\' AND platform = \'#{platform}\';"
+        )
+    end
 end
