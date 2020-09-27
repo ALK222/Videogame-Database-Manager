@@ -30,5 +30,11 @@ class DbManager
             developer = \'#{developer}\'
             WHERE \`name\` = \'#{name}\' AND platform = \'#{platform}\';"
         )
+        genre.each{ |g|
+            @client.query("INSERT INTO genre (game, genre) VALUES (\'#{name}\', \'#{g}\');")
+        }
+        gameModes.each{ |mode|
+            @client.query("INSERT INTO game_modes (game, mode) VALUES (\'#{name}\', \'#{mode}\');")
+        }
     end
 end
