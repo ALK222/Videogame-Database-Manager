@@ -41,9 +41,9 @@ class GameManager
     end
 
     def getAge(rating="PEGI")
-        @page.search("img[itemProp=\"contentRating\"").each{ |r|
-            if(r.include? rating)
-                return r
+        @page.search("span[itemprop=\"contentRating\"]").each{ |r|
+            if(r.text.include? rating)
+                return r.text
             end
         }
     end
