@@ -37,7 +37,9 @@ db.getList.each{ |game|
             gm.getGameModes,
             gm.getGenre,
             gm.getPublisher,
-            gm.getReleaseDate
+            gm.getReleaseDate,
+            gm.getAge("PEGI"),
+            gm.getAge("ESRB")
         )
     end
 }

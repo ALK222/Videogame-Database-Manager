@@ -24,17 +24,28 @@ class DbManager
         return false
     end
 
-    def updateGame(name, platform, developer, gameModes, genre, publisher, releaseDate)
+    def updateGame(name, platform, developer, gameModes, genre, publisher, releaseDate, pegi, esrb)
         @client.query("UPDATE games SET release_date = STR_TO_DATE(\'#{releaseDate}\', \'%M %e, %Y\'),
             publisher = \'#{publisher}\',
-            developer = \'#{developer}\'
+            developer = \'#{developer}\',
+            \`PEGI\` = \'#{pegi}\',
+            \`ESRB\` = \'#{esrb}\'
             WHERE \`name\` = \'#{name}\' AND platform = \'#{platform}\';"
         )
         genre.each{ |g|
-            @client.query("INSERT INTO genre (game, genre) VALUES (\'#{name}\', \'#{g}\');")
+            begin
+                @client.query("INSERT INTO genre (game, genre) VALUES (\'#{name}\', \'#{g}\');")
+            rescue Exception => ex
+                puts ex
+            end
         }
         gameModes.each{ |mode|
-            @client.query("INSERT INTO game_modes (game, mode) VALUES (\'#{name}\', \'#{mode}\');")
+            begin
+                @client.query("INSERT INTO game_modes (game, mode) VALUES (\'#{name}\', \'#{mode}\');")
+            rescue Exception => e
+                puts e
+            end
+
         }
     end
 end
