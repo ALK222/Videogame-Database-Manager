@@ -49,3 +49,9 @@ class GameManager
     end
 
 end
+
+
+
+
+#TODO: hacer función de gerarquía de consolas por antiguedad.
+#TODO: buscador de nombres repetidos
