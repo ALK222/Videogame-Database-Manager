@@ -63,4 +63,14 @@ class DbManager
       WHERE games.`name` = \'#{name}\' 
       ORDER BY pdate")
   end
+
+  def isRemake(name, platform)
+    if (name = "God of War" && platform = "PS4")
+      return "god-of-war--1"
+    end
+    if (name = "The Legend of Zelda: Link's Awakening" && platform = "NSW")
+      return "the-legend-of-zelda-links-awakening--1"
+    end
+    return " "
+  end
 end
