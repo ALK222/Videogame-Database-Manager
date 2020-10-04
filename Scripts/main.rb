@@ -24,10 +24,26 @@ def platformParser(plat)
     return "PS4"
   when "PlayStation Vita"
     return "PSV"
-  when "Super Nintendo"
+  when "Super Nintendo Entertainment System (SNES)"
     return "SNES"
   when "Wii"
     return "WII"
+  when "PC(Microsoft Windows)"
+    return "PC"
+  when "Xbox 360"
+    return "X360"
+  when "PlayStation 2"
+    return "PS2"
+  when "PayStation"
+    return "PS1"
+  when "PlayStation 3"
+    return "PS3"
+  when "Nintendo GameCube"
+    return "GC"
+  when "WII U"
+    return "WIIU"
+  when "Xbox"
+    return "XBOX"
   end
 end
 
@@ -56,6 +72,7 @@ db = DbManager.new(
 db.getList.each { |game|
   if (db.updatable(game))
     begin
+      puts "Fetching data for #{game["name"]}"
       name = webParse(game)
       gm = GameManager.new(name)
       a = gm.getReleaseDate()
@@ -79,9 +96,11 @@ db.getList.each { |game|
       end
     end
     puts "Updating #{game["name"]}"
+    print "Progress [··········] \r"
     name2 = "" + game["name"]
+    print "Progress [#·········] \r"
     name2.gsub!("'", "\\\\\'") #Apostrophes need slash to work on query
-    puts name
+    print "Progress [##········] \r"
     db.updateGame(
       name2,
       game["platform"],
@@ -93,5 +112,7 @@ db.getList.each { |game|
       gm.getAge(),
       gm.getAge("ESRB")
     )
+
+    puts "Progress [##########]"
   end
 }

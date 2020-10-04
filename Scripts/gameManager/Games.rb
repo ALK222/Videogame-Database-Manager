@@ -12,6 +12,7 @@ class GameManager
   end
 
   def getPublisher
+    print "Progress [######.···] \r"
     publisher = Array[]
     @page.search("span[itemprop=\"publisher\"]").each { |a|
       publisher.push(a.text)
@@ -20,6 +21,7 @@ class GameManager
   end
 
   def getReleaseDate
+    print "Progress [#######···] \r"
     return @page.at("span[itemprop=\"datePublished\"]").text
   end
 
@@ -31,10 +33,12 @@ class GameManager
     @page.search("span[itemprop=\"author\"]").each { |a|
       author.push(a.text)
     }
+    print "Progress [###·······] \r"
     return author
   end
 
   def getGameModes
+    print "Progress [####······] \r"
     index = Array[]
     @page.search("a[itemprop=\"playMode\"]").each { |mode|
       index.push(mode.text)
@@ -43,6 +47,7 @@ class GameManager
   end
 
   def getGenre
+    print "Progress [#####·····] \r"
     index = Array[]
     @page.search("a[itemprop=\"genre\"]").each { |mode|
       index.push(mode.text)
@@ -51,21 +56,17 @@ class GameManager
   end
 
   def getAge(rating = "PEGI")
+    if (rating == "PEGI")
+      print "Progress [########··] \r"
+    else
+      print "Progress [#########·] \r"
+    end
+
     @page.search("span[itemprop=\"contentRating\"]").each { |r|
       if (r.text.include? rating)
         return r.text
       end
     }
     return ""
-  end
-
-  def getPlatform
-    index = Array[]
-    @page.search("a").each { |link|
-      if (link["href"] != nil)
-        index.push(link) unless !link["href"].include? "/platforms/"
-      end
-    }
-    return index
   end
 end
