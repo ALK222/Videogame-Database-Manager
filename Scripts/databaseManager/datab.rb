@@ -36,21 +36,42 @@ class DbManager
 
   def updateGame(name, platform, developer, gameModes, genre, publisher, releaseDate, pegi, esrb)
     @client.query("UPDATE games SET release_date = STR_TO_DATE(\'#{releaseDate}\', \'%M %e, %Y\'),
-            publisher = \'#{publisher}\',
-            developer = \'#{developer}\',
             \`PEGI\` = \'#{pegi}\',
             \`ESRB\` = \'#{esrb}\'
             WHERE \`name\` = \'#{name}\' AND platform = \'#{platform}\';")
-    genre.each { |g|
+
+    publisher.each { |p|
+      name2 = "" + p
+      name2.gsub!("'", "\\\\\'") #Apostrophes need slash to work on query
       begin
-        @client.query("INSERT INTO genre (game, genre) VALUES (\'#{name}\', \'#{g}\');")
+        @client.query("INSERT INTO publisher (game, publisher) VALUES (\'#{name}\', \'#{name2}\');")
+      rescue Exception => ex
+        puts ex
+      end
+    }
+    developer.each { |d|
+      name2 = "" + d
+      name2.gsub!("'", "\\\\\'") #Apostrophes need slash to work on query
+      begin
+        @client.query("INSERT INTO developer (game, developer) VALUES (\'#{name}\', \'#{name2}\');")
+      rescue Exception => ex
+        puts ex
+      end
+    }
+    genre.each { |g|
+      name2 = "" + g
+      name2.gsub!("'", "\\\\\'") #Apostrophes need slash to work on query
+      begin
+        @client.query("INSERT INTO genre (game, genre) VALUES (\'#{name}\', \'#{name2}\');")
       rescue Exception => ex
         puts ex
       end
     }
     gameModes.each { |mode|
+      name2 = "" + mode
+      name2.gsub!("'", "\\\\\'") #Apostrophes need slash to work on query
       begin
-        @client.query("INSERT INTO game_modes (game, mode) VALUES (\'#{name}\', \'#{mode}\');")
+        @client.query("INSERT INTO game_modes (game, mode) VALUES (\'#{name}\', \'#{name2}\');")
       rescue Exception => e
         puts e
       end
@@ -62,15 +83,5 @@ class DbManager
       FROM `games` JOIN platforms ON games.platform = platforms.name 
       WHERE games.`name` = \'#{name}\' 
       ORDER BY pdate")
-  end
-
-  def isRemake(name, platform)
-    if (name = "God of War" && platform = "PS4")
-      return "god-of-war--1"
-    end
-    if (name = "The Legend of Zelda: Link's Awakening" && platform = "NSW")
-      return "the-legend-of-zelda-links-awakening--1"
-    end
-    return " "
   end
 end

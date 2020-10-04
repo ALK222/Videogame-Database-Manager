@@ -33,6 +33,7 @@ end
 
 def webParse(game, failed = false)
   name = "" + game["name"]
+  name.gsub!(" & ", "-")
   name.gsub!(" ", "-")
   if (!failed)
     name.gsub!("'", "-")
@@ -40,6 +41,7 @@ def webParse(game, failed = false)
     name.gsub!("'", "")
   end
   name.gsub!(":", "")
+  name.gsub!(".", "")
   return name.downcase
 end
 
@@ -52,35 +54,34 @@ db = DbManager.new(
 )
 
 db.getList.each { |game|
-  puts game["release_date"]
   if (db.updatable(game))
     begin
       name = webParse(game)
-      puts name
       gm = GameManager.new(name)
+      a = gm.getReleaseDate()
     rescue => exception
-      pust "Trying again, posible character parsing error on #{game["name"]}"
-    else
+      puts "Trying again, posible character parsing error on #{game["name"]}"
       name = webParse(game, true)
       gm = GameManager.new(name)
     end
     i = 0
     found = false
     while (!found)
-      puts gm.getPlatform()
       gm.getPlatform().each { |plat|
-        puts plat
         if (platformParser(plat.text) == game["platform"])
           found = true
         end
       }
       i += 1
-      name = name + "--#{i}"
-      gm = GameManager.new(name)
+      if (!found)
+        name = name + "--#{i}"
+        gm = GameManager.new(name)
+      end
     end
     puts "Updating #{game["name"]}"
     name2 = "" + game["name"]
     name2.gsub!("'", "\\\\\'") #Apostrophes need slash to work on query
+    puts name
     db.updateGame(
       name2,
       game["platform"],
@@ -89,7 +90,7 @@ db.getList.each { |game|
       gm.getGenre,
       gm.getPublisher,
       gm.getReleaseDate,
-      gm.getAge("PEGI"),
+      gm.getAge(),
       gm.getAge("ESRB")
     )
   end

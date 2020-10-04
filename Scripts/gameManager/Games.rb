@@ -12,7 +12,11 @@ class GameManager
   end
 
   def getPublisher
-    return @page.at("span[itemprop=\"publisher\"]").text
+    publisher = Array[]
+    @page.search("span[itemprop=\"publisher\"]").each { |a|
+      publisher.push(a.text)
+    }
+    return publisher
   end
 
   def getReleaseDate
@@ -20,7 +24,14 @@ class GameManager
   end
 
   def getDeveloper
-    return @page.at("div[itemprop=\"author\"]").text
+    author = Array[]
+    @page.search("div[itemprop=\"author\"]").each { |b|
+      author.push(b.text)
+    }
+    @page.search("span[itemprop=\"author\"]").each { |a|
+      author.push(a.text)
+    }
+    return author
   end
 
   def getGameModes
@@ -45,6 +56,7 @@ class GameManager
         return r.text
       end
     }
+    return ""
   end
 
   def getPlatform
