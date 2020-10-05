@@ -12,7 +12,7 @@ You can use [bundler]() to install al gems with
 bundle install
 ```
 
-on the scrits folder location
+on the scripts folder location
 
 ## Structure
 
