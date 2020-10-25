@@ -20,9 +20,14 @@ class GameManager
     return publisher
   end
 
-  def getReleaseDate
+  def getReleaseDate(p)
     print "Progress [#######···] \r"
-    return @page.at("span[itemprop=\"datePublished\"]").text
+    @page.search("div[class=\"text-muted release-date\"]").each { |rd|
+      if (rd.at("a").text == p)
+        return rd.at("span[itemprop=\"datePublished\"]").text
+      end
+    }
+    return "Nov 2011"
   end
 
   def getDeveloper
@@ -35,6 +40,16 @@ class GameManager
     }
     print "Progress [###·······] \r"
     return author
+  end
+
+  def getPlatform
+    index = Array[]
+    @page.search("a").each { |link|
+      if (link["href"] != nil)
+        index.push(link) unless !link["href"].include? "/platforms/"
+      end
+    }
+    return index
   end
 
   def getGameModes

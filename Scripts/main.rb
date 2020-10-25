@@ -34,13 +34,13 @@ def platformParser(plat)
     return "X360"
   when "PlayStation 2"
     return "PS2"
-  when "PayStation"
+  when "PlayStation"
     return "PS1"
   when "PlayStation 3"
     return "PS3"
   when "Nintendo GameCube"
-    return "GC"
-  when "WII U"
+    return "NGC"
+  when "Wii U"
     return "WIIU"
   when "Xbox"
     return "XBOX"
@@ -53,6 +53,7 @@ def webParse(game, failed = false)
   name.gsub!(" ", "-")
   if (!failed)
     name.gsub!("'", "-")
+    name.gsub!(".", "-")
   else
     name.gsub!("'", "")
   end
@@ -75,7 +76,7 @@ db.getList.each { |game|
       puts "Fetching data for #{game["name"]}"
       name = webParse(game)
       gm = GameManager.new(name)
-      a = gm.getReleaseDate()
+      a = gm.getReleaseDate(db.parsePlatform(game["platform"]))
     rescue => exception
       puts "Trying again, posible character parsing error on #{game["name"]}"
       name = webParse(game, true)
@@ -108,7 +109,7 @@ db.getList.each { |game|
       gm.getGameModes,
       gm.getGenre,
       gm.getPublisher,
-      gm.getReleaseDate,
+      gm.getReleaseDate(db.parsePlatform(game["platform"])),
       gm.getAge(),
       gm.getAge("ESRB")
     )

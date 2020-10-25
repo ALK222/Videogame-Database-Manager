@@ -84,4 +84,47 @@ class DbManager
       WHERE games.`name` = \'#{name}\' 
       ORDER BY pdate")
   end
+
+  def parsePlatform(plat)
+    case plat
+    when "3DS"
+      return "Nintendo 3ds"
+    when "GB"
+      return "Game Boy"
+    when "GBA"
+      return "Game Boy Advance"
+    when "GBC"
+      return "Game Boy Color"
+    when "N64"
+      return "Nintendo 64"
+    when "NDS"
+      return "Nintendo DS"
+    when "NSW"
+      return "Nintendo Switch"
+    when "PS4"
+      return "PlayStation 4"
+    when "PSV"
+      return "PlayStation Vita"
+    when "SNES"
+      return "Super Nintendo Entertainment System (SNES)"
+    when "WII"
+      return "Wii"
+    when "PC"
+      return "PC(Microsoft Windows)"
+    when "X360"
+      return "Xbox 360"
+    when "PS2"
+      return "PlayStation 2"
+    when "PS1"
+      return "PlayStation"
+    when "PS3"
+      return "PlayStation 3"
+    when "NGC"
+      return "Nintendo GameCube"
+    when "WIIU"
+      return "Wii U"
+    when "XBOX"
+      return "Xbox"
+    end
+  end
 end
