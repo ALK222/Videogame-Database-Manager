@@ -76,9 +76,8 @@ db.getList.each { |game|
       puts "Fetching data for #{game["name"]}"
       name = webParse(game)
       gm = GameManager.new(name)
-      a = gm.getReleaseDate(db.parsePlatform(game["platform"]))
+      a = gm.pageExists()
     rescue => exception
-      puts "Trying again, posible character parsing error on #{game["name"]}"
       name = webParse(game, true)
       gm = GameManager.new(name)
     end

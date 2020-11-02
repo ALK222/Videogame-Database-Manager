@@ -88,7 +88,7 @@ class DbManager
   def parsePlatform(plat)
     case plat
     when "3DS"
-      return "Nintendo 3ds"
+      return "Nintendo 3DS"
     when "GB"
       return "Game Boy"
     when "GBA"
