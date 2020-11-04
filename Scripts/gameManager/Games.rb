@@ -5,15 +5,29 @@ require "net/ftp"
 require "open-uri"
 require "mechanize"
 
+#
+# Manager of the game data on the web
+#
 class GameManager
-  def initialize(*args)
+
+  #
+  # Constructor of the GameManager Class
+  #
+  # @param [String] name Name of the game
+  #
+  def initialize(name)
     @agent = Mechanize.new
-    @url = "https://www.igdb.com/games/#{args[0]}"
-    @page = @agent.get("https://www.igdb.com/games/" + args[0])
+    @url = "https://www.igdb.com/games/#{name}"
+    @page = @agent.get("https://www.igdb.com/games/" + name)
   end
 
+  #
+  # Checks if the page exists or not
+  #
+  # @return [Boolean] True if exists, false if not
+  #
   def pageExists
-    url = URI.parse(url_string)
+    url = URI.parse(@url)
     req = Net::HTTP.new(url.host, url.port)
     req.use_ssl = (url.scheme == "https")
     path = url.path if url.path.present?
@@ -23,6 +37,11 @@ class GameManager
     false # false if can't find the server
   end
 
+  #
+  # Gets the publishers of the game
+  #
+  # @return [Array[String]] Publishers of the game
+  #
   def getPublisher
     print "Progress [######.···] \r"
     publisher = Array[]
@@ -32,6 +51,13 @@ class GameManager
     return publisher
   end
 
+  #
+  # Gets the release date of the game given a platform
+  #
+  # @param [String] p platform of the game
+  #
+  # @return [String] Release date of the game or a invalid date if not found the platform
+  #
   def getReleaseDate(p)
     print "Progress [#######···] \r"
     @page.search("div[class=\"text-muted release-date\"]").each { |rd|
@@ -42,6 +68,11 @@ class GameManager
     return "Nov 2011"
   end
 
+  #
+  # Gets the developers of the game
+  #
+  # @return [Array[String]] Developers of the game
+  #
   def getDeveloper
     author = Array[]
     @page.search("div[itemprop=\"author\"]").each { |b|
@@ -54,6 +85,11 @@ class GameManager
     return author
   end
 
+  #
+  # Gets the platform of the game
+  #
+  # @return [Array[String]] Platforms of a game
+  #
   def getPlatform
     index = Array[]
     @page.search("a").each { |link|
@@ -64,6 +100,11 @@ class GameManager
     return index
   end
 
+  #
+  # Gets the game modes of the game
+  #
+  # @return [Array[String]] Game modes of the game
+  #
   def getGameModes
     print "Progress [####······] \r"
     index = Array[]
@@ -73,6 +114,11 @@ class GameManager
     return index
   end
 
+  #
+  # Gets the genres of the game
+  #
+  # @return [Array[String]] Genres of the game
+  #
   def getGenre
     print "Progress [#####·····] \r"
     index = Array[]
@@ -82,6 +128,13 @@ class GameManager
     return index
   end
 
+  #
+  # Gets the age rating of the game
+  #
+  # @param [String] rating Age rating type, defaults to PEGI
+  #
+  # @return [String] Age restriction on the given system
+  #
   def getAge(rating = "PEGI")
     if (rating == "PEGI")
       print "Progress [########··] \r"

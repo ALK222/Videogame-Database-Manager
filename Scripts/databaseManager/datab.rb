@@ -2,7 +2,15 @@
 
 require "mysql2"
 
+#
+# Database Manager
+#
 class DbManager
+  #
+  # DbManager constructor
+  #
+  # @param [String[]] *args array with the values for the host, username, password and database
+  #
   def initialize(*args)
     @client = Mysql2::Client.new(
       :host => args[0],
@@ -11,22 +19,24 @@ class DbManager
       :database => args[3],
     )
     @list = @client.query("SELECT games.name, games.platform, games.release_date FROM `games`")
-    @platforms = @client.query("SELECT * FROM `platforms` ORDER BY `release_date`")
-    @comparator
   end
 
+  #
+  # Gets the list of games
+  #
+  # @return [Query] Query with all games
+  #
   def getList
     return @list
   end
 
-  def getPlatform
-    return @platforms
-  end
-
-  def getComp
-    return @comparator
-  end
-
+  #
+  # Checks if a game has to be updated
+  #
+  # @param [Hash] game game to check
+  #
+  # @return [Boolean] true if has no release date, false if has
+  #
   def updatable(game)
     if (game["release_date"] == nil)
       return true
@@ -34,6 +44,19 @@ class DbManager
     return false
   end
 
+  #
+  # Updates a game
+  #
+  # @param [String] name Name of the game
+  # @param [String] platform Platform of the game
+  # @param [Array] developer Array of developers
+  # @param [Array] gameModes Array of modes
+  # @param [Array] genre Array of genres
+  # @param [Array] publisher Array of publishers
+  # @param [String] releaseDate Release date of the game
+  # @param [String] pegi Age restriction in PEGI system
+  # @param [Strign] esrb Age restriction in ESRB system
+  #
   def updateGame(name, platform, developer, gameModes, genre, publisher, releaseDate, pegi, esrb)
     @client.query("UPDATE games SET release_date = STR_TO_DATE(\'#{releaseDate}\', \'%M %e, %Y\'),
             \`PEGI\` = \'#{pegi}\',
@@ -78,13 +101,13 @@ class DbManager
     }
   end
 
-  def compare(name)
-    @comparator = client.query("SELECT games.name, games.platform, platforms.release_date AS pdate 
-      FROM `games` JOIN platforms ON games.platform = platforms.name 
-      WHERE games.`name` = \'#{name}\' 
-      ORDER BY pdate")
-  end
-
+  #
+  # Parses the platform name to its web name
+  #
+  # @param [String] plat Platform name in DB
+  #
+  # @return [String] Platform name in web
+  #
   def parsePlatform(plat)
     case plat
     when "3DS"

@@ -4,6 +4,13 @@ require "./databaseManager/datab.rb"
 require "./gameManager/Games.rb"
 require "dotenv"
 
+#
+# Parses the web name of the platform to its database name
+#
+# @param [String] plat Web name
+#
+# @return [String] DB name
+#
 def platformParser(plat)
   case plat
   when "Nintendo 3DS"
@@ -47,6 +54,14 @@ def platformParser(plat)
   end
 end
 
+#
+# Parses the name of the game to its web form
+#
+# @param [Hash] game Game to parse
+# @param [Boolean] failed fail check to change the name
+#
+# @return [String] name of the game in web form
+#
 def webParse(game, failed = false)
   name = "" + game["name"]
   name.gsub!(" & ", "-")
