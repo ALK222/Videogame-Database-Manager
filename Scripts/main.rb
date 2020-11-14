@@ -64,6 +64,7 @@ end
 #
 def webParse(game, failed = false)
   name = "" + game["name"]
+  name.gsub!("!", "")
   name.gsub!(" & ", "-")
   name.gsub!(" ", "-")
   if (!failed)
@@ -92,9 +93,12 @@ db.getList.each { |game|
       name = webParse(game)
       gm = GameManager.new(name)
       a = gm.pageExists()
+      if (!a)
+        name = webParse(game, true)
+        gm = GameManager.new(name)
+      end
     rescue => exception
-      name = webParse(game, true)
-      gm = GameManager.new(name)
+      puts exception
     end
     i = 0
     found = false
@@ -106,8 +110,12 @@ db.getList.each { |game|
       }
       i += 1
       if (!found)
-        name = name + "--#{i}"
-        gm = GameManager.new(name)
+        name1 = name + "--#{i}"
+        gm = GameManager.new(name1)
+        if (i > 20)
+          puts "Timeout on game #{name}"
+          exit
+        end
       end
     end
     puts "Updating #{game["name"]}"
