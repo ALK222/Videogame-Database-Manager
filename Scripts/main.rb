@@ -51,6 +51,10 @@ def platformParser(plat)
     return "WIIU"
   when "Xbox"
     return "XBOX"
+  when "PC DOS"
+    return "PC2"
+  when "PC (Microsoft Windows)"
+    return "PC"
   end
 end
 
@@ -75,6 +79,8 @@ def webParse(game, failed = false)
   end
   name.gsub!(":", "")
   name.gsub!(".", "")
+  name.gsub!(",", "")
+  puts name
   return name.downcase
 end
 
@@ -88,17 +94,14 @@ db = DbManager.new(
 
 db.getList.each { |game|
   if (db.updatable(game))
+    puts "Fetching data for #{game["name"]}"
     begin
-      puts "Fetching data for #{game["name"]}"
       name = webParse(game)
       gm = GameManager.new(name)
-      a = gm.pageExists()
-      if (!a)
-        name = webParse(game, true)
-        gm = GameManager.new(name)
-      end
-    rescue => exception
-      puts exception
+    rescue StandardError => e
+      puts e
+      name = webParse(game, true)
+      gm = GameManager.new(name)
     end
     i = 0
     found = false

@@ -18,8 +18,10 @@ class GameManager
   def initialize(name)
     @agent = Mechanize.new
     @url = "https://www.igdb.com/games/#{name}"
-    puts @url
     @page = @agent.get("https://www.igdb.com/games/" + name)
+    if (@page.uri.to_s.include? "search")
+      raise StandardError.new "Page not found"
+    end
   end
 
   #
@@ -29,11 +31,8 @@ class GameManager
   #
   def pageExists
     begin
-      url = @url
-      req = Net::HTTP.new(url.host, url.port)
-      res = req.request_head(url.path)
-      puts res.code
-      return true
+      @url.
+        return true
     rescue SocketError => e
       puts e
       return false
@@ -65,6 +64,25 @@ class GameManager
     print "Progress [#######···] \r"
     @page.search("div[class=\"text-muted release-date\"]").each { |rd|
       if (rd.at("a").text == p)
+        res = rd.at("span[itemprop=\"datePublished\"]").text.split(" ")
+        if (res.length() == 1)
+          final = ["January", "01,", res[0]]
+          return final.join(" ")
+        else
+          if (res.length() == 2)
+            if (res[0] == "Q1")
+              res[0] = "January"
+            elsif (res[0] == "Q2")
+              res[0] = "May"
+            elsif (res[0] == "Q3")
+              res[0] = "July"
+            elsif (res[0] == "Q4")
+              res[0] = "October"
+            end
+            final = [res[0], "01,", res[1]]
+            return final.join(" ")
+          end
+        end
         return rd.at("span[itemprop=\"datePublished\"]").text
       end
     }

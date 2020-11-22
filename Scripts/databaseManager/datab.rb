@@ -133,7 +133,7 @@ class DbManager
     when "WII"
       return "Wii"
     when "PC"
-      return "PC(Microsoft Windows)"
+      return "PC (Microsoft Windows)"
     when "X360"
       return "Xbox 360"
     when "PS2"
@@ -148,6 +148,8 @@ class DbManager
       return "Wii U"
     when "XBOX"
       return "Xbox"
+    when "PC2"
+      return "PC DOS"
     end
   end
 end
