@@ -45,6 +45,8 @@ def platformParser(plat)
     return "PS1"
   when "PlayStation 3"
     return "PS3"
+  when "PlayStation Portable"
+    return "PSP"
   when "Nintendo GameCube"
     return "NGC"
   when "Wii U"

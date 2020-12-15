@@ -30,11 +30,10 @@ class GameManager
   # @return [Boolean] True if exists, false if not
   #
   def pageExists
-    begin
-      @url.
-        return true
-    rescue SocketError => e
-      puts e
+    comp = @page.search("div[class=\"text-muted release-date\"]")
+    if (comp != nil)
+      return true
+    else
       return false
     end
   end

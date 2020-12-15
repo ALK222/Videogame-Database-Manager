@@ -150,6 +150,8 @@ class DbManager
       return "Xbox"
     when "PC2"
       return "PC DOS"
+    when "PSP"
+      return "PlayStation Portable"
     end
   end
 end
