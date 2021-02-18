@@ -18,7 +18,7 @@ class DbManager
       :password => args[2],
       :database => args[3],
     )
-    @list = @client.query("SELECT games.name, games.platform, games.release_date FROM `games`")
+    @list = @client.query("SELECT games.name, games.platform, games.release_date FROM `games` where games.release_date IS NULL")
   end
 
   #

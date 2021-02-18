@@ -70,9 +70,11 @@ end
 #
 def webParse(game, failed = false)
   name = "" + game["name"]
+  name.gsub!(";", "-")
   name.gsub!("!", "")
   name.gsub!(" & ", "-")
   name.gsub!(" ", "-")
+  name.gsub!("_", "-")
   if (!failed)
     name.gsub!("'", "-")
     name.gsub!(".", "-")
@@ -86,6 +88,9 @@ def webParse(game, failed = false)
   return name.downcase
 end
 
+def dataFetching(game)
+end
+
 Dotenv.load()
 db = DbManager.new(
   ENV["DB_HOST"],
@@ -95,52 +100,64 @@ db = DbManager.new(
 )
 
 db.getList.each { |game|
-  if (db.updatable(game))
-    puts "Fetching data for #{game["name"]}"
-    begin
-      name = webParse(game)
-      gm = GameManager.new(name)
-    rescue StandardError => e
-      puts e
-      name = webParse(game, true)
-      gm = GameManager.new(name)
-    end
-    i = 0
-    found = false
-    while (!found)
-      gm.getPlatform().each { |plat|
-        if (platformParser(plat.text) == game["platform"])
-          found = true
-        end
-      }
-      i += 1
-      if (!found)
-        name1 = name + "--#{i}"
-        gm = GameManager.new(name1)
-        if (i > 20)
-          puts "Timeout on game #{name}"
-          exit
+  begin
+    if (db.updatable(game))
+      puts "Fetching data for #{game["name"]}"
+      begin
+        name = webParse(game)
+        gm = GameManager.new(name)
+      rescue StandardError => e
+        begin
+          name = webParse(game, true)
+          gm = GameManager.new(name)
+        rescue StandardError => e
+          puts e
         end
       end
-    end
-    puts "Updating #{game["name"]}"
-    print "Progress [··········] \r"
-    name2 = "" + game["name"]
-    print "Progress [#·········] \r"
-    name2.gsub!("'", "\\\\\'") #Apostrophes need slash to work on query
-    print "Progress [##········] \r"
-    db.updateGame(
-      name2,
-      game["platform"],
-      gm.getDeveloper,
-      gm.getGameModes,
-      gm.getGenre,
-      gm.getPublisher,
-      gm.getReleaseDate(db.parsePlatform(game["platform"])),
-      gm.getAge(),
-      gm.getAge("ESRB")
-    )
+      i = 0
+      found = false
+      while (!found)
+        if (gm != nil)
+          gm.getPlatform().each { |plat|
+            if (platformParser(plat.text) == game["platform"])
+              found = true
+            end
+          }
+        end
 
-    puts "Progress [##########]"
+        i += 1
+        if (!found)
+          name1 = name + "--#{i}"
+          gm = GameManager.new(name1)
+          if (i > 20)
+            puts "Timeout on game #{name}"
+            exit
+          end
+        end
+      end
+      puts "Updating #{game["name"]}"
+      print "Progress [··········] \r"
+      name2 = "" + game["name"]
+      print "Progress [#·········] \r"
+      name2.gsub!("'", "\\\\\'") #Apostrophes need slash to work on query
+      print "Progress [##········] \r"
+      db.updateGame(
+        name2,
+        game["platform"],
+        gm.getDeveloper,
+        gm.getGameModes,
+        gm.getGenre,
+        gm.getPublisher,
+        gm.getReleaseDate(db.parsePlatform(game["platform"])),
+        gm.getAge(),
+        gm.getAge("ESRB")
+      )
+
+      puts "Progress [##########]"
+    end
+  rescue StandardError => e
+    puts "Failed Process on game: #{game["name"]}."
+  ensure
+    next
   end
 }
