@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require "mysql2"
+require "Mysql2"
 
 #
 # Database Manager
